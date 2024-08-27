@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Template with Top Bar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</head>
+<body class="bg-gray-100" x-data="{ activeTab: 'overview', isLoggedIn: false }">
+    <!-- Top Bar -->
+    <div class="bg-white shadow-md">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <!-- Logo Placement -->
+            <div class="flex items-center">
+                <img src="/api/placeholder/150/50" alt="Logo" class="h-8">
+            </div>
+            
+            <!-- Login/Logout Area -->
+            <div x-show="!isLoggedIn">
+                <button @click="isLoggedIn = true" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                    Login
+                </button>
+            </div>
+            <div x-show="isLoggedIn" class="flex items-center">
+                <span class="mr-4">Welcome, User!</span>
+                <button @click="isLoggedIn = false" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-gray-800 text-white p-6">
+            <h1 class="text-2xl font-bold mb-6">Dashboard</h1>
+            <nav>
+                <a @click="activeTab = 'overview'" class="flex items-center py-2 px-4 mb-2 rounded cursor-pointer" :class="{ 'bg-gray-700': activeTab === 'overview' }">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                    Overview
+                </a>
+                <a @click="activeTab = 'analytics'" class="flex items-center py-2 px-4 mb-2 rounded cursor-pointer" :class="{ 'bg-gray-700': activeTab === 'analytics' }">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    Analytics
+                </a>
+                <a @click="activeTab = 'reports'" class="flex items-center py-2 px-4 mb-2 rounded cursor-pointer" :class="{ 'bg-gray-700': activeTab === 'reports' }">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Reports
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-10 overflow-y-auto">
+            <!-- Overview Tab Content -->
+            <div x-show="activeTab === 'overview'">
+                <h2 class="text-2xl font-bold mb-6">Overview</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Line Chart -->
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold mb-4">Monthly Sales</h3>
+                        <canvas id="lineChart"></canvas>
+                    </div>
+                    
+                    <!-- Bar Chart -->
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold mb-4">Product Performance</h3>
+                        <canvas id="barChart"></canvas>
+                    </div>
+                    
+                    <!-- Pie Chart -->
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold mb-4">Customer Segmentation</h3>
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                    
+                    <!-- Doughnut Chart -->
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold mb-4">Revenue Sources</h3>
+                        <canvas id="doughnutChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab Content -->
+            <div x-show="activeTab === 'analytics'">
+                <h2 class="text-2xl font-bold mb-6">Analytics</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">Key Metrics</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-blue-100 p-4 rounded">
+                            <h4 class="font-bold">Total Users</h4>
+                            <p class="text-2xl">10,245</p>
+                        </div>
+                        <div class="bg-green-100 p-4 rounded">
+                            <h4 class="font-bold">Revenue</h4>
+                            <p class="text-2xl">$52,365</p>
+                        </div>
+                        <div class="bg-yellow-100 p-4 rounded">
+                            <h4 class="font-bold">Conversion Rate</h4>
+                            <p class="text-2xl">3.7%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Tab Content -->
+            <div x-show="activeTab === 'reports'">
+                <h2 class="text-2xl font-bold mb-6">Reports</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">Available Reports</h3>
+                    <ul class="list-disc pl-5">
+                        <li class="mb-2">Monthly Sales Report</li>
+                        <li class="mb-2">Product Performance Analysis</li>
+                        <li class="mb-2">Customer Segmentation Insights</li>
+                        <li class="mb-2">Revenue Source Breakdown</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chart initialization code (same as before)
+        document.addEventListener('alpine:init', () => {
+            // Line Chart
+            const lineCtx = document.getElementById('lineChart').getContext('2d');
+            new Chart(lineCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Sales',
+                        data: [12, 19, 3, 5, 2, 3],
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                }
+            });
+
+            // Bar Chart
+            const barCtx = document.getElementById('barChart').getContext('2d');
+            new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Product A', 'Product B', 'Product C', 'Product D'],
+                    datasets: [{
+                        label: 'Sales',
+                        data: [12, 19, 3, 5],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                }
+            });
+
+            // Pie Chart
+            const pieCtx = document.getElementById('pieChart').getContext('2d');
+            new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['New', 'Returning', 'Inactive'],
+                    datasets: [{
+                        data: [300, 50, 100],
+                        backgroundColor: [
+                            'rgb(255, 99, 132)',
+                            'rgb(54, 162, 235)',
+                            'rgb(255, 205, 86)'
+                        ]
+                    }]
+                }
+            });
+
+            // Doughnut Chart
+            const doughnutCtx = document.getElementById('doughnutChart').getContext('2d');
+            new Chart(doughnutCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Online', 'Retail', 'Direct'],
+                    datasets: [{
+                        data: [300, 50, 100],
+                        backgroundColor: [
+                            'rgb(255, 99, 132)',
+                            'rgb(54, 162, 235)',
+                            'rgb(255, 205, 86)'
+                        ]
+                    }]
+                }
+            });
+        });
+    </script>
+</body>
+</html>

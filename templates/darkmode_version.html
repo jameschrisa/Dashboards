@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Template with Dark Mode</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            100: '#1e293b',
+                            200: '#334155',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-dark-100 text-gray-800 dark:text-gray-200" 
+      x-data="{ activeTab: 'overview', isLoggedIn: false, isDarkMode: true }" 
+      :class="{ 'dark': isDarkMode }">
+    <!-- Top Bar -->
+    <div class="bg-white dark:bg-dark-200 shadow-md">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <!-- Logo Placement -->
+            <div class="flex items-center">
+                <img src="/api/placeholder/150/50" alt="Logo" class="h-8">
+            </div>
+            
+            <!-- Login/Logout Area -->
+            <div x-show="!isLoggedIn">
+                <button @click="isLoggedIn = true" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                    Login
+                </button>
+            </div>
+            <div x-show="isLoggedIn" class="flex items-center">
+                <span class="mr-4">Welcome, User!</span>
+                <button @click="isLoggedIn = false" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-gray-800 dark:bg-dark-200 text-white p-6">
+            <h1 class="text-2xl font-bold mb-6">Dashboard</h1>
+            <nav>
+                <a @click="activeTab = 'overview'" class="flex items-center py-2 px-4 mb-2 rounded cursor-pointer" :class="{ 'bg-gray-700 dark:bg-dark-100': activeTab === 'overview' }">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                    Overview
+                </a>
+                <a @click="activeTab = 'analytics'" class="flex items-center py-2 px-4 mb-2 rounded cursor-pointer" :class="{ 'bg-gray-700 dark:bg-dark-100': activeTab === 'analytics' }">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    Analytics
+                </a>
+                <a @click="activeTab = 'reports'" class="flex items-center py-2 px-4 mb-2 rounded cursor-pointer" :class="{ 'bg-gray-700 dark:bg-dark-100': activeTab === 'reports' }">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Reports
+                </a>
+                <a @click="activeTab = 'settings'" class="flex items-center py-2 px-4 mb-2 rounded cursor-pointer" :class="{ 'bg-gray-700 dark:bg-dark-100': activeTab === 'settings' }">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Settings
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col">
+            <div class="flex-1 p-10 overflow-y-auto">
+                <!-- Overview Tab Content -->
+                <div x-show="activeTab === 'overview'">
+                    <h2 class="text-2xl font-bold mb-6">Overview</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Line Chart -->
+                        <div class="bg-white dark:bg-dark-200 p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-semibold mb-4">Monthly Sales</h3>
+                            <canvas id="lineChart"></canvas>
+                        </div>
+                        
+                        <!-- Bar Chart -->
+                        <div class="bg-white dark:bg-dark-200 p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-semibold mb-4">Product Performance</h3>
+                            <canvas id="barChart"></canvas>
+                        </div>
+                        
+                        <!-- Pie Chart -->
+                        <div class="bg-white dark:bg-dark-200 p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-semibold mb-4">Customer Segmentation</h3>
+                            <canvas id="pieChart"></canvas>
+                        </div>
+                        
+                        <!-- Doughnut Chart -->
+                        <div class="bg-white dark:bg-dark-200 p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-semibold mb-4">Revenue Sources</h3>
+                            <canvas id="doughnutChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Tab Content -->
+                <div x-show="activeTab === 'analytics'">
+                    <h2 class="text-2xl font-bold mb-6">Analytics</h2>
+                    <div class="bg-white dark:bg-dark-200 p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold mb-4">Key Metrics</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-blue-100 dark:bg-blue-900 p-4 rounded">
+                                <h4 class="font-bold">Total Users</h4>
+                                <p class="text-2xl">10,245</p>
+                            </div>
+                            <div class="bg-green-100 dark:bg-green-900 p-4 rounded">
+                                <h4 class="font-bold">Revenue</h4>
+                                <p class="text-2xl">$52,365</p>
+                            </div>
+                            <div class="bg-yellow-100 dark:bg-yellow-900 p-4 rounded">
+                                <h4 class="font-bold">Conversion Rate</h4>
+                                <p class="text-2xl">3.7%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Tab Content -->
+                <div x-show="activeTab === 'reports'">
+                    <h2 class="text-2xl font-bold mb-6">Reports</h2>
+                    <div class="bg-white dark:bg-dark-200 p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold mb-4">Available Reports</h3>
+                        <ul class="list-disc pl-5">
+                            <li class="mb-2">Monthly Sales Report</li>
+                            <li class="mb-2">Product Performance Analysis</li>
+                            <li class="mb-2">Customer Segmentation Insights</li>
+                            <li class="mb-2">Revenue Source Breakdown</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Settings Tab Content -->
+                <div x-show="activeTab === 'settings'">
+                    <h2 class="text-2xl font-bold mb-6">Settings</h2>
+                    <div class="bg-white dark:bg-dark-200 p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold mb-4">Theme</h3>
+                        <div class="flex items-center">
+                            <span class="mr-3">Light</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" value="" class="sr-only peer" x-model="isDarkMode">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                            </label>
+                            <span class="ml-3">Dark</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="bg-gray-200 dark:bg-dark-200 text-center lg:text-left">
+                <div class="container p-6 text-gray-800 dark:text-gray-200">
+                    <div class="grid lg:grid-cols-5 gap-4">
+                        <div class="mb-6 md:mb-0">
+                            <h5 class="font-medium mb-2 uppercase">About</h5>
+                            <ul class="list-none mb-0">
+                                <li>
+                                    <a href="#!" class="text-gray-800 dark:text-gray-200">Company</a>
+                                </li>
+                                <li>
+                                    <a href="#!" class="text-gray-800 dark:text-gray-200">Team</a>
+                                </li>
+                                <li>
+                                    <a href="#!" class="text-gray-800 dark:text-gray-200">Careers</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mb-6 md:mb-0">
+                            <h5 class="font-medium mb-2 uppercase">Support</h5>
+                            <ul class="list-none mb-0">
+                                <li>
+                                    <a href="#!" class="text-gray-800 dark:text-gray-200">Help Center</a>
+                                </li>
+                                <li>
+                                    <a href="#!" class="text-gray-800 dark:text-gray-200">Contact Us</a>
+                                </li>
+                                <li>
+                                    <a href="#!" class="text-gray-800 dark:text-gray-200">FAQ</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mb-6 md:mb-0">
+                            <h5 class="font-medium mb-2 uppercase">Legal</h5>
+                            <ul class="list-none mb-0">
+                                <li>
+                                    <a href="#!" class="text-gray-800 dark:text-gray-200">Privacy Policy</a>
+                                </li>
+                                <li>
+                                    <a href="#!" class="text-gray-800 dark:text-gray-200">Terms of Use</a>
+                                </li>
+                                <li>
+                                    <a href="#!" class="text-gray-800 dark:text-gray-200">Cookie Policy</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mb-6 md:mb-0">
+                            <h5 class="font-medium mb-2 uppercase">Documentation</h5>
+                            <ul class="list-none mb-0">
+                                <li>
+                                    <a href="#!" class="text-gray-800 dark:text-gray-200">API</a>
+                                </li>
+                                <li>
+                                    <a href="#!" class="text-gray-800 dark:text-gray-200">Guides</a>
+                                </li>
+                                <li>
+                                    <a href="#!" class="text-gray-800 dark:text-gray-200">Resources</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mb-6 md:mb-0">
+                            <h5 class="font-medium mb-2 uppercase">Connect</h5>
+                            <ul class="list-none mb-0">
+                                <li>
+                                    <a href="#!" class="text-gray-800 dark:text-gray-200">Twitter</a>
+                                </li>
+                                <li>
+                                    <a href="#!" class="text-gray-800 dark:text-gray-200">LinkedIn</a>
+                                </li>
+                                <li>
+                                    <a href="#!" class="text-gray-800 dark:text-gray-200">GitHub</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center p-4 bg-gray-300 dark:bg-dark-100">
+                    © 2024 Dashboard. All rights reserved.
+                </div>
+            </footer>
+    </div>
+</body>
